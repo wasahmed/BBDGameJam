@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <script src="js/index.js"></script>
+    <script src="js/player.js"></script>
+    <script src="js/border.js"></script>
+    <title>Document</title>
+</head>
+<body>
+
+    <canvas width="1280", height="720" id="game-canvas"></canvas>
+    <!-- <style>
+        body{
+            background-color: greenyellow;
+        }
+    </style>
+
+    <div id="screen">
+        <style>
+            #screen{
+                position: relative;
+                border: 2px solid black;
+                margin: auto;
+                background-color: #9bbc0f;
+                width: 320px;
+                height: 300px;
+
+            }
+        </style>
+
+        <div id="sprite">
+            <style>
+                #sprite{
+                    position: absolute;
+                    background-color: black;
+                    width: 20px;
+                    height: 20px;
+                    top: 0px;
+                    left: 0px;
+                }
+            </style>
+        </div>
+    </div>
+
+    <script>
+        alert("Use arrow keys to move");
+
+            var xPos = 0;
+            var yPos = 0;
+
+            document.onkeydown = function(e){
+                switch(e.keyCode)
+                {
+                    case 37:
+                        moveLeft();
+                        break;
+                    case 38:
+                        moveUp();
+                        break;
+                    case 39:
+                        moveRight();
+                        break;
+                    case 40:
+                        moveDown();
+                        break;
+                }
+            }
+
+            function moveLeft(){
+                if (xPos>0){
+                    xPos-=10;
+                    document.getElementById("sprite").style.left = xPos + 'px';
+                }
+            }    
+            function moveRight(){
+                if (xPos<=295){
+                    xPos+=10;
+                    document.getElementById("sprite").style.left = xPos + 'px';
+                }
+            }    
+            function moveUp(){
+                if (yPos>0){
+                    yPos-=10;
+                    document.getElementById("sprite").style.top = yPos + 'px';
+                }
+            }    
+            function moveDown(){
+                if (yPos<=275){
+                    yPos+=10;
+                    document.getElementById("sprite").style.top = yPos + 'px';
+                }
+            }    
+
+    </script> -->
+    
+</body>
+</html>
