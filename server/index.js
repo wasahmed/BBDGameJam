@@ -1,0 +1,119 @@
+const express = require('express');
+const app = express();
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server);
+
+app.get('/', (req, res) => {
+  res.sendFile(__dirname + '/index.html');
+});
+
+class GameState {
+  static playerIdGameMap = {}
+
+  constructor(gameId){
+    this.gameId = gameId;
+    this.gameStarted = false;
+    this.hider = {
+      id: '',
+      position: '',
+      score: 0,   
+    };
+  
+    this.seeker = {
+      id: '',
+      position: '',
+      score: 0,
+    };      
+  }
+
+  // Helpers
+  isSeeker(playerId){
+    return this.seeker.id == playerId;
+  }
+
+  isHider(playerId){
+    return this.hider.id == playerId;
+  }
+
+  static getPlayerGameState(playerId){
+    return GameState.playerIdGameMap[playerId];
+  }
+
+  // Operations
+  joinGame(playerId){  
+    if (this.seeker.id && this.hider.id){
+      console.log('Game if full sorry...');
+      return false;
+    }
+
+    GameState.playerIdGameMap[playerId] = this;
+    if (!this.seeker.id) {
+      this.seeker.id = playerId;
+      console.log(playerId, 'joined as seeker...');
+    } else if (!this.hider.id) {
+      this.hider.id = playerId;
+      console.log(playerId, 'joined as hider...');
+    }    
+
+    if (this.hider.id && this.seeker.id){
+      this.startGame();
+    }
+
+    return true;
+  }   
+
+  // Initialise game state
+  startGame(){
+    this.gameStarted = true;
+  }
+
+
+  updatePosition(playerId, newPos){
+    console.log(playerId, 'Position update', newPos);
+    if (this.isSeeker(playerId)){
+      this.seeker.position = newPos;
+    } else {
+      this.hider.position = newPos;
+    }        
+  }
+}  
+
+
+const gameStateMap = {};
+
+io.on('connection', (socket) => {
+  // join game =================================
+  socket.on('joinGame', async (gameId) => {    
+    // create game if doesnt exist        
+    if (!gameStateMap[gameId]){      
+      gameStateMap[gameId] = new GameState(gameId);
+    }
+
+    let gameState = gameStateMap[gameId];
+
+    if (gameState.joinGame(socket.id)){      
+      console.log('Joining and emitting game state to room...', gameState.gameId);
+      await socket.join(gameState.gameId);
+      await io.to(gameState.gameId).emit('gameState', gameState)      
+    } 
+  });
+
+  // update position =================================
+  socket.on('updatePos', (newPos) => {      
+    let gameState = GameState.getPlayerGameState(socket.id);
+    if (gameState){
+      console.log('Emitting game state to room...', gameState.gameId);
+      gameState.updatePosition(socket.id, newPos);            
+      io.to(gameState.gameId).emit('gameState', gameState);
+    }
+  });
+
+});
+
+
+
+server.listen(3000, () => {
+  console.log('listening on *:3000');
+});
