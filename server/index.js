@@ -5,8 +5,10 @@ const server = http.createServer(app);
 const { Server } = require("socket.io");
 const io = new Server(server);
 
+
+app.use(express.static('app'))
 app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
+  res.sendFile(__dirname + '/app/index.html');
 });
 
 class GameState {
@@ -15,15 +17,38 @@ class GameState {
   constructor(gameId){
     this.gameId = gameId;
     this.gameStarted = false;
+    this.map = [
+      {
+        width: 200,
+        height: 150,
+        x: 400,
+        y: 10,
+      },
+      {
+        width: 800,
+        height: 200,
+        x: 20,
+        y: 40,
+      },
+      {
+        width: 20,
+        height: 300,
+        x: 200,
+        y: 300,
+      }
+    ]
     this.hider = {
       id: '',
-      position: '',
+      position: {
+        x: 0,
+        y: 0,
+      },
       score: 0,   
     };
   
     this.seeker = {
       id: '',
-      position: '',
+      position: 0,
       score: 0,
     };      
   }

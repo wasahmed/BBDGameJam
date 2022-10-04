@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html>
+  <head>
+
+    <title>Socket.IO chat</title>
+    <style>    
+      body{
+        background-color: black;
+        color: white;
+        overflow: hidden;
+      }
+
+      #id{
+        width: 400px;
+        background-color: rgb(47, 47, 47);
+        border-radius: 10px;
+        margin-left: auto;
+        margin-right: auto;
+        margin-top: 20px;      
+        padding: 20px;          
+      }
+
+      #connect-card{
+        position: absolute;
+        margin: auto;
+        width: 100%;
+        top: 10%;
+        padding: 10px;  
+        padding-bottom: 50px;  
+        border-radius: 10px;    
+        text-align: center;    
+      }
+
+      #connect-card > div{
+        margin: auto;
+        width: 50%;
+        background-color: rgb(47, 47, 47);
+        padding: 10px;  
+        padding-bottom: 50px;  
+        border-radius: 10px;    
+        text-align: center;    
+      }
+
+      #game-state-info-card{        
+        width: 300px;
+        background-color: rgb(47, 47, 47);
+        padding: 20px;          
+      }
+
+      #game{
+        display: none;              
+      }
+
+      #game-map{
+        background-color: rgb(25, 25, 25);
+        width: 100%;
+        padding: 10px;
+      }
+
+      #game-wrapper{
+        display: flex;
+      }
+
+      #tmpSeekerBlock{
+        position: absolute;
+        /* left: 50%;                 */
+        /* top: 20%; */
+        background-color: red;
+        width: 30px;                
+        height: 30px;                
+      }
+
+      input{
+        width: 250px;
+        background-color: rgb(233, 233, 233);
+        border-radius: 20px;
+        padding: 10px 20px;
+        border: 0px;
+        margin-top: 20px;
+      }
+
+      #btn-join-game{
+        background-color: rgb(6, 117, 209);
+        color: white;
+        border-radius: 20px;
+        padding: 10px 20px;
+        border: 0px;
+        margin-top: 20px;
+      }
+      
+    </style>
+  </head>
+  <body >
+    <!-- Connect Card -->
+    <div id="connect-card">  
+      <div>
+        <h1>Hide & Seek</h1>  
+        <form>
+          <input id="gameId"  type="text" placeholder="Game ID">
+          <br>
+          <button type="button" id="btn-join-game" onclick="onJoinGame()">Join Game</button>
+        </form>
+      </div>      
+    </div>
+        
+    <!-- Game -->
+    <div id="game">
+      <div id="game-wrapper">
+           <!-- Game Map -->
+          <div id="game-map">
+            <div>
+              <canvas  id="tutorial" width="1000" height="1000" style="margin-left: auto;"></canvas>
+            </div>
+          </div>
+
+          <!-- Info NAV -->      
+          <div id="game-state-info-card">
+            <div id="player-type">N/A</div>
+            <div id="game-status">N/A</div>
+          </div>
+      </div>      
+    </div>       
+  </body>
+</html>
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="game.js"></script>
+<script src="rays.js"></script>
