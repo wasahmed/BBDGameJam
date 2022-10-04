@@ -1,4 +1,6 @@
 # Run App
-```cd server
+```
 npm install
-node index.js```
+cd server
+node index.js
+```
