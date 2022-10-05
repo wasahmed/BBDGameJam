@@ -6,15 +6,27 @@ startGameEngine = () => {
 
     document.addEventListener('keydown', (event) => {
         keysPressed[event.key] = true;
-     });
-     
-     document.addEventListener('keyup', (event) => {
-         delete keysPressed[event.key];
-      });
+    });
+    
+    document.addEventListener('keyup', (event) => {
+        delete keysPressed[event.key];
+    });
 
 
     let tutorial_canvas = document.getElementById("tutorial");
     let tutorial_canvas_context = tutorial_canvas.getContext('2d');
+    let offsetX = tutorial_canvas.offsetLeft;
+    let offsetY = tutorial_canvas.offsetTop;
+
+    let mouse = {
+        x: 0,
+        y: 0
+    };
+    
+    let mouseMove = function(event) {
+        mouse.x = event.pageX - offsetX
+        mouse.y = event.pageY - offsetY
+    };
 
     // todo callback method to re-update
     if (isHider){
@@ -23,6 +35,7 @@ startGameEngine = () => {
         tutorial_canvas.style.background = "#000000"
     }
 
+    tutorial_canvas.addEventListener('mousemove', mouseMove);
 
     class Rectangle {
         constructor(x, y, height, width, color) {
@@ -74,7 +87,7 @@ startGameEngine = () => {
         constructor(){
             this.body = new Circle( 500, 500, 10, "white")
             this.ray = []
-            this.rayrange = 640
+            this.rayrange = 1000
             this.globalangle = Math.PI
             this.gapangle = Math.PI/6
             this.edge1 = new Circle(0,0,10,"red")
@@ -141,11 +154,7 @@ startGameEngine = () => {
             }
             tutorial_canvas_context.stroke()
 
-            var lightGradient = tutorial_canvas_context.createLinearGradient(0, 0, 0, 170);
-            lightGradient.addColorStop(0, "black");
-            lightGradient.addColorStop(1, "white");
-
-            tutorial_canvas_context.fillStyle = lightGradient
+            tutorial_canvas_context.fillStyle = "red"
             tutorial_canvas_context.fill()
             this.ray =[]
         }
@@ -155,12 +164,13 @@ startGameEngine = () => {
             if (isHider){
                 this.globalangle = gameState.seeker.position;
             } else if (isSeeker) {
-                if(keysPressed['t']){
-                    this.globalangle += .05
-                }
-                if(keysPressed['r']){
-                    this.globalangle -= .05
-                }                                                
+                let trueX = mouse.x-500;
+                let trueY = -(mouse.y-500);
+
+                let angleOffset = getAngle(0,0,trueX,trueY)*(-Math.PI/180)-Math.PI/5.5;
+
+                this.globalangle = angleOffset
+
                 socket.emit('updatePos', this.globalangle);
             }
 
@@ -311,7 +321,7 @@ startGameEngine = () => {
             console.error(error);            
         }
        
-    }, 14) 
+    }, 7) 
 
     function intersects(circle, left) {
         var areaX = left.x - circle.x;
@@ -334,6 +344,14 @@ startGameEngine = () => {
         }else{
             return true;
         }
+    }
+
+    function getAngle(cx, cy, ex, ey) {
+        var dy = ey - cy;
+        var dx = ex - cx;
+        var theta = Math.atan2(dy, dx);
+        theta *= 180 / Math.PI; 
+        return theta;
     }
 
 
