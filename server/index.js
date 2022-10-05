@@ -14,7 +14,7 @@ app.get('/', (req, res) => {
 class GameState {
   static playerIdGameMap = {}
 
-  constructor(gameId){
+  constructor(gameId) {
     this.gameId = gameId;
     this.gameStarted = false;
     this.map = [
@@ -43,32 +43,32 @@ class GameState {
         x: 0,
         y: 0,
       },
-      score: 0,   
+      score: 0,
     };
-  
+
     this.seeker = {
       id: '',
       position: 0,
       score: 0,
-    };      
+    };
   }
 
   // Helpers
-  isSeeker(playerId){
+  isSeeker(playerId) {
     return this.seeker.id == playerId;
   }
 
-  isHider(playerId){
+  isHider(playerId) {
     return this.hider.id == playerId;
   }
 
-  static getPlayerGameState(playerId){
+  static getPlayerGameState(playerId) {
     return GameState.playerIdGameMap[playerId];
   }
 
   // Operations
-  joinGame(playerId){  
-    if (this.seeker.id && this.hider.id){
+  joinGame(playerId) {
+    if (this.seeker.id && this.hider.id) {
       console.log('Game if full sorry...');
       return false;
     }
@@ -80,58 +80,68 @@ class GameState {
     } else if (!this.hider.id) {
       this.hider.id = playerId;
       console.log(playerId, 'joined as hider...');
-    }    
+    }
 
-    if (this.hider.id && this.seeker.id){
+    if (this.hider.id && this.seeker.id) {
       this.startGame();
     }
 
     return true;
-  }   
+  }
 
   // Initialise game state
-  startGame(){
+  startGame() {
     this.gameStarted = true;
   }
 
 
-  updatePosition(playerId, newPos){
+  updatePosition(playerId, newPos) {
     console.log(playerId, 'Position update', newPos);
-    if (this.isSeeker(playerId)){
+    if (this.isSeeker(playerId)) {
       this.seeker.position = newPos;
     } else {
       this.hider.position = newPos;
-    }        
+    }
   }
-}  
+}
 
 
 const gameStateMap = {};
 
 io.on('connection', (socket) => {
   // join game =================================
-  socket.on('joinGame', async (gameId) => {    
+  socket.on('joinGame', async (gameId) => {
+    if (GameState.getPlayerGameState(socket.id)) {
+      // already in game.. echo state
+      await io.to(gameState.gameId).emit('gameState', gameState)
+      return;
+    }
+
     // create game if doesnt exist        
-    if (!gameStateMap[gameId]){      
+    if (!gameStateMap[gameId]) {
       gameStateMap[gameId] = new GameState(gameId);
     }
 
     let gameState = gameStateMap[gameId];
 
-    if (gameState.joinGame(socket.id)){      
+    if (gameState.joinGame(socket.id)) {
       console.log('Joining and emitting game state to room...', gameState.gameId);
       await socket.join(gameState.gameId);
-      await io.to(gameState.gameId).emit('gameState', gameState)      
-    } 
+      await io.to(gameState.gameId).emit('gameState', gameState)
+    }
   });
 
   // update position =================================
-  socket.on('updatePos', (newPos) => {      
+  socket.on('updatePos', (newPos) => {
     let gameState = GameState.getPlayerGameState(socket.id);
-    if (gameState){
+    if (gameState) {
       console.log('Emitting game state to room...', gameState.gameId);
-      gameState.updatePosition(socket.id, newPos);            
-      io.to(gameState.gameId).emit('gameState', gameState);
+      gameState.updatePosition(socket.id, newPos);
+      socket.to(gameState.gameId).emit(
+        'updatePos', {
+        seeker: gameState.seeker.position,
+        hider: gameState.hider.position,
+      });
     }
   });
 

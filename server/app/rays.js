@@ -1,4 +1,13 @@
 
+let gameInterval;
+
+stopGameEngine = () => {
+    if (gameInterval) clearInterval(gameInterval);
+    
+    // TODO unsubscribe to mouse listener..
+}
+
+
 startGameEngine = () => {
     console.log('Starting game engine...');
 
@@ -296,7 +305,7 @@ startGameEngine = () => {
         player.borders.push(tempRectangle)
     }
 
-    window.setInterval(function(){ 
+    gameInterval = window.setInterval(function(){ 
 
         try {
             tutorial_canvas_context.clearRect(0, 0, tutorial_canvas.width, tutorial_canvas.height)  

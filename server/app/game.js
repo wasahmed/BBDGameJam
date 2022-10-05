@@ -1,5 +1,6 @@
 // lol this bad
 let startGameEngine;
+let stopGameEngine;
 
 // UI elements
 let connectCard = document.getElementById('connect-card');
@@ -15,10 +16,8 @@ let socket = io();
 let isSeeker = false;  
 let isHider = false;  
 
-// ON GAME STATE ================================================
+// Game State Updates
 socket.on('gameState', (_gs) => {    
-  // console.log('Got gamestate...', _gs);  
-
   try {            
     gameState = _gs;
     isSeeker = socket.id == gameState.seeker.id; 
@@ -35,16 +34,22 @@ socket.on('gameState', (_gs) => {
   }
 
 });
+
+
+// Position Updates
+socket.on('updatePos', (position) => {    
+  gameState.seeker.position = position.seeker;
+  gameState.hider.position = position.hider;  
+});
 // ================================================
 
 // Update UI based on the game state
 const uiUpdate = () => {
-  // console.log('Updating UI from gamestate...', gameState);
-
   if (gameState){
     connectCard.style.display = 'none';      
     gameDiv.style.display = 'block';
 
+    document.getElementById('game-id').innerText = gameState.gameId;
     document.getElementById('player-type').innerText = isSeeker? 'SEEKING' : 'HIDING';
     document.getElementById('game-status').innerText = gameState.gameStarted? 'Game Started..' : 'Waiting for player to join...';
   } else {
