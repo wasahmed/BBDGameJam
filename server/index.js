@@ -135,7 +135,6 @@ io.on('connection', (socket) => {
   socket.on('updatePos', (newPos) => {
     let gameState = GameState.getPlayerGameState(socket.id);
     if (gameState) {
-      console.log('Emitting game state to room...', gameState.gameId);
       gameState.updatePosition(socket.id, newPos);
       socket.to(gameState.gameId).emit(
         'updatePos', {

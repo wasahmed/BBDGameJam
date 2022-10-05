@@ -49,8 +49,8 @@ const uiUpdate = () => {
     connectCard.style.display = 'none';      
     gameDiv.style.display = 'block';
 
-    document.getElementById('game-id').innerText = gameState.gameId;
-    document.getElementById('player-type').innerText = isSeeker? 'SEEKING' : 'HIDING';
+    document.getElementById('game-id').innerText = `GameId: ${gameState.gameId}`;
+    document.getElementById('player-type').innerHTML = isSeeker? 'You are <b>SEEKING</b>...' : 'You are <b>HIDING</b>...';
     document.getElementById('game-status').innerText = gameState.gameStarted? 'Game Started..' : 'Waiting for player to join...';
   } else {
     connectCard.style.display = 'block';
