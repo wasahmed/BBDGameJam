@@ -347,6 +347,16 @@ startGameEngine = () => {
     }
 
 
+    function getAngle(cx, cy, ex, ey) {
+        var dy = ey - cy;
+        var dx = ex - cx;
+        var theta = Math.atan2(dy, dx);
+        theta *= 180 / Math.PI; 
+        return theta;
+    }
+
+
+
 // random color that will be visible on  black background
 function getRandomLightColor() {
     var letters = '0123456789ABCDEF';

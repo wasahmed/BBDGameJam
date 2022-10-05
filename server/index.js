@@ -96,7 +96,6 @@ class GameState {
 
 
   updatePosition(playerId, newPos) {
-    console.log(playerId, 'Position update', newPos);
     if (this.isSeeker(playerId)) {
       this.seeker.position = newPos;
     } else {
