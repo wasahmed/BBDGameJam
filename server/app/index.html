@@ -7,7 +7,7 @@
       body{
         background-color: black;
         color: white;
-        overflow: hidden;
+        /* overflow: hidden; */
       }
 
       #id{
@@ -83,7 +83,7 @@
         margin-top: 20px;
       }
 
-      #btn-join-game{
+      button{
         background-color: rgb(6, 117, 209);
         color: white;
         border-radius: 20px;
@@ -120,10 +120,17 @@
           <!-- Info NAV -->      
           <div id="game-state-info-card">
             <div id="game-id">N/A</div>
-            <div style="width: 100%; background-color: rgb(222, 222, 222); height: 1px;">
-            </div>
             <div id="player-type" style="font-weight: bold;">N/A</div>
+            <br>
+            <div style="width: 100%; background-color: rgb(222, 222, 222); height: 1px;"></div>
+            <div>Score: </div>
+            <div> You: <span id="playerScore"></span> </div>
+            <div> Opponent: <span id="enemyScore"></span></div>
+            <br>
+            <div style="width: 100%; background-color: rgb(222, 222, 222); height: 1px;"></div>
             <div id="game-status">N/A</div>
+
+            <button onclick="hiderFound()">FOUND</button>
           </div>
       </div>      
     </div>       
@@ -133,3 +140,9 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="game.js"></script>
 <script src="rays.js"></script>
+<script>
+  const hiderFound = () => {
+    console.log('Emit hider found here...');    
+    socket.emit('hiderFound');
+  }
+</script>

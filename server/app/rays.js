@@ -2,9 +2,7 @@
 let gameInterval;
 
 stopGameEngine = () => {
-    if (gameInterval) clearInterval(gameInterval);
-    
-    // TODO unsubscribe to mouse listener..
+    if (gameInterval) clearInterval(gameInterval);    
 }
 
 

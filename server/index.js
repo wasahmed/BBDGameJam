@@ -17,6 +17,9 @@ class GameState {
   constructor(gameId) {
     this.gameId = gameId;
     this.gameStarted = false;
+    this.playerScores = {
+      '': 0,
+    }
     this.map = [
       {
         width: 200,
@@ -43,13 +46,11 @@ class GameState {
         x: 0,
         y: 0,
       },
-      score: 0,
     };
 
     this.seeker = {
       id: '',
       position: 0,
-      score: 0,
     };
   }
 
@@ -66,6 +67,39 @@ class GameState {
     return GameState.playerIdGameMap[playerId];
   }
 
+  
+  hiderFound(){
+    this.playerScores[this.seeker.id] += 1; 
+
+    // switch player ids
+    let tmp = this.hider.id;
+    this.hider.id = this.seeker.id;
+    this.seeker.id = tmp;
+    
+    // reset position
+    this.seeker.position = 0;
+    this.hider.position = {
+      x: 0,
+      y: 0,
+    };
+  }
+
+  hiderEvaded(){
+    this.playerScores[this.hider.id] += 1; 
+
+    // switch player ids
+    let tmp = this.hider.id;
+    this.hider.id = this.seeker.id;
+    this.seeker.id = tmp;
+    
+    // reset position
+    this.seeker.position = 0;
+    this.hider.position = {
+      x: 0,
+      y: 0,
+    };
+  }
+
   // Operations
   joinGame(playerId) {
     if (this.seeker.id && this.hider.id) {
@@ -75,9 +109,11 @@ class GameState {
 
     GameState.playerIdGameMap[playerId] = this;
     if (!this.seeker.id) {
+      this.playerScores[playerId] =  0;
       this.seeker.id = playerId;
       console.log(playerId, 'joined as seeker...');
     } else if (!this.hider.id) {
+      this.playerScores[playerId] =  0;
       this.hider.id = playerId;
       console.log(playerId, 'joined as hider...');
     }
@@ -127,6 +163,28 @@ io.on('connection', (socket) => {
       console.log('Joining and emitting game state to room...', gameState.gameId);
       await socket.join(gameState.gameId);
       await io.to(gameState.gameId).emit('gameState', gameState)
+    }
+  });
+
+
+  // Game Stuff
+  // Both emmitted by Observer....(seeker)
+  socket.on('hiderEvaded', async () => {    
+    console.log('Hider evaded...');   
+    let gameState = GameState.getPlayerGameState(socket.id);
+
+    if (gameState){
+        gameState.hiderEvaded();
+        await io.to(gameState.gameId).emit('roundEnd', gameState);
+    }
+  });
+  
+  socket.on('hiderFound', async () => {    
+    let gameState = GameState.getPlayerGameState(socket.id);
+
+    if (gameState){
+        gameState.hiderFound();
+        await io.to(gameState.gameId).emit('roundEnd', gameState);
     }
   });
 
