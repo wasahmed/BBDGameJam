@@ -22,23 +22,101 @@ class GameState {
     }
     this.map = [
       {
-        width: 200,
-        height: 150,
-        x: 400,
-        y: 10,
+        width: 1000,
+        height: 30,
+        x: 0,
+        y: 0,
       },
       {
-        width: 800,
-        height: 200,
-        x: 20,
+        width: 30,
+        height: 1000,
+        x: 0,
+        y: 0,
+      },
+      {
+        width: 120,
+        height: 290,
+        x: 40,
         y: 40,
       },
       {
-        width: 20,
+        width: 120,
+        height: 290,
+        x: 40,
+        y: 40,
+      },
+      {
+        width: 1000,
         height: 300,
-        x: 200,
-        y: 300,
-      }
+        x: 970,
+        y: 0,
+      },
+      {
+        width: 30,
+        height: 400,
+        x: 570,
+        y: 40,
+      },
+      {
+        width: 110,
+        height:120,
+        x: 160,
+        y: 270,
+      },
+      {
+        width: 170,
+        height: 200,
+        x: 40,
+        y: 470,
+      },
+      {
+        width: 120,
+        height: 320,
+        x: 650,
+        y: 370,
+      },
+      {
+        width: 370,
+        height: 60,
+        x: 400,
+        y: 640,
+      },
+      {
+        width: 20,
+        height: 1000,
+        x: 0,
+        y: 990,
+      },
+      {
+        width: 120,
+        height: 160,
+        x: 100,
+        y: 640,
+      },
+      {
+        width: 120,
+        height: 240,
+        x: 100,
+        y: 870,
+      },
+      {
+        width: 180,
+        height: 70,
+        x: 460,
+        y: 810,
+      },
+      {
+        width: 100,
+        height: 90,
+        x: 600,
+        y: 730,
+      },
+      {
+        width: 100,
+        height: 90,
+        x: 180,
+        y: 100,
+      },
     ]
     this.hider = {
       id: '',
