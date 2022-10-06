@@ -1,5 +1,6 @@
 // lol this bad
 let startGameEngine;
+let stopGameEngine;
 
 // UI elements
 let connectCard = document.getElementById('connect-card');
@@ -15,10 +16,8 @@ let socket = io();
 let isSeeker = false;  
 let isHider = false;  
 
-// ON GAME STATE ================================================
+// Game State Updates
 socket.on('gameState', (_gs) => {    
-  // console.log('Got gamestate...', _gs);  
-
   try {            
     gameState = _gs;
     isSeeker = socket.id == gameState.seeker.id; 
@@ -35,18 +34,45 @@ socket.on('gameState', (_gs) => {
   }
 
 });
-// ================================================
+
+// Round Ends
+socket.on('roundEnd', (_gs) => {    
+  console.log('Round ended...', gameState);
+  stopGameEngine();
+
+  gameState = _gs;
+  isSeeker = socket.id == gameState.seeker.id; 
+  isHider = socket.id == gameState.hider.id;
+  uiUpdate();              
+
+  alert('Game Engine Stopped... Round Ended');
+  startGameEngine();
+});
+
+// Position Updates
+socket.on('updatePos', (position) => {    
+  gameState.seeker.position = position.seeker;
+  gameState.hider.position = position.hider;  
+});
 
 // Update UI based on the game state
 const uiUpdate = () => {
-  // console.log('Updating UI from gamestate...', gameState);
-
   if (gameState){
     connectCard.style.display = 'none';      
     gameDiv.style.display = 'block';
 
-    document.getElementById('player-type').innerText = isSeeker? 'SEEKING' : 'HIDING';
+    document.getElementById('game-id').innerText = `GameId: ${gameState.gameId}`;
+    document.getElementById('player-type').innerHTML = isSeeker? 'You are <b>SEEKING</b>...' : 'You are <b>HIDING</b>...';
     document.getElementById('game-status').innerText = gameState.gameStarted? 'Game Started..' : 'Waiting for player to join...';
+
+    if (isHider){
+      document.getElementById('playerScore').innerText = gameState.playerScores[gameState.hider.id];    
+      document.getElementById('enemyScore').innerText = gameState.playerScores[gameState.seeker.id];      
+    } else if (isSeeker){
+      document.getElementById('playerScore').innerText = gameState.playerScores[gameState.seeker.id];    
+      document.getElementById('enemyScore').innerText = gameState.playerScores[gameState.hider.id];
+    }
+    
   } else {
     connectCard.style.display = 'block';
     gameDiv.style.display = 'none';      
